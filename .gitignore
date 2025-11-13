@@ -1,0 +1,21 @@
+# --- Backend Python ---
+__pycache__/
+*.pyc
+env/
+venv/
+.venv/
+
+# Datos brutos (NO subirlos a GitHub)
+backend/data/raw/
+
+# Logs
+*.log
+
+# --- Frontend Vite/React ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Sistemas
+.DS_Store
+Thumbs.db

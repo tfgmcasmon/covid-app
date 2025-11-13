@@ -1,0 +1,250 @@
+:root {
+  --bg-body: #0f172a;
+  --bg-card: #0b1120;
+  --bg-panel: #020617;
+  --accent: #38bdf8;
+  --accent-soft: rgba(56, 189, 248, 0.2);
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-subtle: rgba(148, 163, 184, 0.25);
+  --radius-xl: 18px;
+  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.85);
+  --shadow-card: 0 16px 30px rgba(15, 23, 42, 0.7);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: radial-gradient(circle at top, #1e293b 0, #020617 45%, #000 100%);
+  color: var(--text-main);
+}
+
+/* CONTENEDOR GENERAL */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HERO */
+
+.hero {
+  padding: 32px 16px 24px;
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: clamp(2.4rem, 3vw + 1rem, 3.4rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
+  color: #f9fafb;
+}
+
+.hero-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.hero-subtitle span {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* LAYOUT PRINCIPAL */
+
+.layout {
+  flex: 1;
+  width: 100%;
+  margin: 0 auto 32px;
+  padding: 0 20px 32px;
+}
+
+/* PANEL GENÉRICO / CARDS */
+
+.panel {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.8)
+  );
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(20px);
+}
+
+.panel-filters,
+.charts-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+}
+
+
+
+.panel-chart {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 18px;
+}
+
+.panel-header {
+  margin-bottom: 4px;
+}
+
+.panel-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+  margin: 0 0 2px;
+}
+
+.panel-description,
+.panel-caption {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.panel-body {
+  margin-top: 8px;
+}
+
+/* GRID DE FILTROS */
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.field-select {
+  appearance: none;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: #020617;
+  color: var(--text-main);
+  padding: 7px 13px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.field-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+  background-color: #020617;
+}
+
+/* GRID DE GRÁFICOS */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+}
+
+/* TEXTO DENTRO DE LOS COMPONENTES */
+
+p {
+  margin-top: 0;
+}
+
+/* FOOTER */
+
+.app-footer {
+  border-top: 1px solid rgba(15, 23, 42, 0.9);
+  padding: 14px 16px 18px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  background: radial-gradient(circle at bottom, #020617 0, #000 60%);
+}
+
+/* Plotly ocupa todo el ancho del card */
+
+.js-plotly-plot {
+  width: 100% !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .filters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .charts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel-chart {
+    padding-inline: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-inner {
+    text-align: left;
+  }
+
+  .hero-title {
+    text-align: left;
+  }
+
+  .hero-subtitle {
+    text-align: left;
+  }
+
+  .filters-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
