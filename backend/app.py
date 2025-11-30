@@ -1,21 +1,18 @@
 from flask import Flask
 from flask_cors import CORS
-from api.covid_routes import covid_bp
+
+from api.covid_routes import covid_bp  # único blueprint
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
-    # Permitir llamadas desde el frontend React en desarrollo
     CORS(app)
 
-    # Registrar blueprint de la API
+    # Todas las rutas viven en covid_bp
     app.register_blueprint(covid_bp, url_prefix="/api")
-
     return app
 
 
-app = create_app()
-
 if __name__ == "__main__":
-    # Para desarrollo local
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app = create_app()
+    app.run(debug=True)

@@ -1,5 +1,7 @@
 from pathlib import Path
 from typing import List, Dict, Optional
+import math
+
 import pandas as pd
 
 
@@ -15,7 +17,6 @@ def clean_value(val):
     if val is None:
         return None
 
-    # Strings tipo 'NaN', 'nan', '', 'None'
     if isinstance(val, str):
         if val.strip().lower() in ["nan", "none", ""]:
             return None
@@ -24,15 +25,12 @@ def clean_value(val):
         except Exception:
             return None
 
-    # Floats tipo np.nan
     try:
-        import math
         if isinstance(val, float) and math.isnan(val):
             return None
     except Exception:
         pass
 
-    # Intentar cast genérico
     try:
         return float(val)
     except Exception:
@@ -41,7 +39,7 @@ def clean_value(val):
 
 def clean_str(val):
     """
-    Limpia strings para JSON: si es NaN/None/'' devuelve None, si no lo convierte a str.
+    Limpia strings para JSON: si es NaN/None/'' devuelve None.
     """
     if val is None:
         return None
@@ -51,7 +49,6 @@ def clean_str(val):
             return None
         return val
 
-    # Para valores tipo NaN de pandas
     if pd.isna(val):
         return None
 
@@ -59,21 +56,19 @@ def clean_str(val):
 
 
 # ======================================
-# Rutas base
+# Rutas base y carga de datos
 # ======================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "processed"
 
-# ======================================
-# Carga de datasets
-# ======================================
-
 EPI_PATH = DATA_DIR / "covid_epi_country.csv"
-epi_df = pd.read_csv(EPI_PATH, parse_dates=["date"])
-
 MOB_PATH = DATA_DIR / "covid_mobility_country.csv"
+DEM_PATH = DATA_DIR / "covid_demographics_country.csv"
+
+epi_df = pd.read_csv(EPI_PATH, parse_dates=["date"])
 mob_df = pd.read_csv(MOB_PATH, parse_dates=["date"])
+dem_df = pd.read_csv(DEM_PATH)
 
 # ======================================
 # Métricas
@@ -97,12 +92,14 @@ MOBILITY_METRICS = [
 
 
 # ======================================
-# Servicios
+# Servicios de datos
 # ======================================
 
 def get_available_countries() -> List[Dict]:
+    countries_epi = epi_df[["country_code", "country_name"]].drop_duplicates()
+    countries_dem = dem_df[["country_code", "country_name"]].drop_duplicates()
     countries = (
-        epi_df[["country_code", "country_name"]]
+        pd.concat([countries_epi, countries_dem], ignore_index=True)
         .drop_duplicates()
         .sort_values("country_name")
     )
@@ -126,7 +123,7 @@ def get_epi_timeseries(
 ) -> List[Dict]:
 
     if metric not in EPI_METRICS:
-        raise ValueError(f"Métrica no soportada: {metric}")
+        raise ValueError(f"Métrica epidemiológica no soportada: {metric}")
 
     df = epi_df[epi_df["country_code"] == country_code].copy()
 
@@ -164,7 +161,8 @@ def get_mobility_timeseries(
 
     if metric not in MOBILITY_METRICS:
         raise ValueError(
-            f"Métrica de movilidad no soportada: {metric}. Métricas válidas: {MOBILITY_METRICS}"
+            f"Métrica de movilidad no soportada: {metric}. "
+            f"Métricas válidas incluyen, por ejemplo: {MOBILITY_METRICS[:5]}..."
         )
 
     df = mob_df[mob_df["country_code"] == country_code].copy()
@@ -192,3 +190,35 @@ def get_mobility_timeseries(
         )
 
     return result
+
+
+def get_epi_summary(
+    country_code: str,
+    metric: str = "new_confirmed",
+) -> Dict:
+    """Calcula KPIs simples para una serie epidemiológica país + métrica."""
+    series = get_epi_timeseries(country_code=country_code, metric=metric)
+    if not series:
+        raise ValueError(f"No hay datos para {country_code} / {metric}")
+
+    # Convertimos a DataFrame para cálculo más cómodo
+    df = pd.DataFrame(series)
+    df["value"] = df["value"].fillna(0)
+
+    peak_idx = df["value"].idxmax()
+    peak_row = df.loc[peak_idx]
+
+    summary = {
+        "country_code": country_code,
+        "country_name": peak_row.get("country_name"),
+        "metric": metric,
+        "peak_value": float(peak_row["value"] or 0),
+        "peak_date": peak_row["date"],
+        "last_value": float(df["value"].iloc[-1] or 0),
+        "period_start": df["date"].iloc[0],
+        "period_end": df["date"].iloc[-1],
+        "non_zero_days": int((df["value"] > 0).sum()),
+        "n_points": int(len(df)),
+    }
+
+    return summary
