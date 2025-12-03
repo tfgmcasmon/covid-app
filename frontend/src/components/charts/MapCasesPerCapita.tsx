@@ -11,8 +11,8 @@ import { MapDataPoint } from "../types/covid";
 const geoUrl =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
+// ⬇️ IMPORTANTE: sin height fija aquí
 const containerStyle: React.CSSProperties = {
-  height: "min(60vh, 480px)", // se adapta un poco a la pantalla
   borderRadius: "0.9rem",
   backgroundColor: "#ffffff",
   border: "1px solid #e5e7eb",
@@ -226,7 +226,7 @@ const MapCasesPerCapita: React.FC = () => {
             <div
               style={{
                 display: "flex",
-                justifyContent: "space_between",
+                justifyContent: "space-between",
                 fontSize: "0.75rem",
                 color: "#9ca3af",
               }}
@@ -239,9 +239,17 @@ const MapCasesPerCapita: React.FC = () => {
       </div>
 
       {/* Mapa */}
-      <div style={{ flex: 1, marginTop: "0.5rem" }}>
+      <div
+        style={{
+          marginTop: "0.5rem",
+          // ⬇️ altura fija del mapa, sin flex:1
+          height: "380px",
+        }}
+      >
         <ComposableMap
           projectionConfig={{ scale: 145 }}
+          width={800}
+          height={380}
           style={{ width: "100%", height: "100%" }}
         >
           <Geographies geography={geoUrl}>

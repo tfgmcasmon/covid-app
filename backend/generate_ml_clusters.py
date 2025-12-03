@@ -1,10 +1,14 @@
 import pandas as pd
 from pathlib import Path
 
+import importlib
+
 try:
-    from sklearn.cluster import KMeans
-    from sklearn.preprocessing import StandardScaler
-except ImportError as e:
+    sklearn_cluster = importlib.import_module("sklearn.cluster")
+    sklearn_preproc = importlib.import_module("sklearn.preprocessing")
+    KMeans = getattr(sklearn_cluster, "KMeans")
+    StandardScaler = getattr(sklearn_preproc, "StandardScaler")
+except Exception as e:
     raise SystemExit(
         "Necesitas instalar scikit-learn para esta parte de ML.\n"
         "Ejecuta:  pip install scikit-learn"
