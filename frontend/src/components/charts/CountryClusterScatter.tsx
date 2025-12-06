@@ -393,7 +393,7 @@ const CountryClusterScatter: React.FC = () => {
                       ];
                     return [value, name];
                   }}
-                  labelFormatter={(label, payload) =>
+                  labelFormatter={(payload) =>
                     payload && payload[0]
                       ? (payload[0].payload as ClusterPoint).country_name
                       : ""
