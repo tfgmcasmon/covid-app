@@ -9,7 +9,7 @@ import { interpolateYlOrRd } from "d3-scale-chromatic";
 import { MapDataPoint } from "../types/covid";
 
 const geoUrl =
-  "/data/world-110m.json"; // TopoJSON del mundo
+  "/data/countries-110m.json"; // TopoJSON del mundo
 
 // ⬇️ IMPORTANTE: sin height fija aquí
 const containerStyle: React.CSSProperties = {
